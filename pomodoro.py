@@ -2,6 +2,7 @@
 
 from enum import Enum
 import subprocess
+import signal
 import sys
 import time
 
@@ -10,13 +11,11 @@ class Mode(Enum):
     PAUSE = 2
 
 def toggle_mode(mode):
+    assert mode == Mode.LEARN or mode == Mode.PAUSE
     if mode == Mode.LEARN:
         return Mode.PAUSE
     elif mode == Mode.PAUSE:
         return Mode.LEARN
-    else:
-        print("toggle_mode: faulty input")
-        exit(1)
 
 def erase_line():
     sys.stdout.write('\x1b[1A') # move up
@@ -25,6 +24,10 @@ def erase_line():
 
 def minutes_and_seconds(s):
     return f'{s//60}:{s%60:02}'
+
+def sigint_handler(signum, frame):
+    print(f'Worked for {minutes_and_seconds(global_counters[Mode.LEARN])}; paused for {minutes_and_seconds(global_counters[Mode.PAUSE])}')
+    sys.exit(0)
 
 LEARN_TIMER_DEFAULT = 25 * 60
 PAUSE_TIMER_DEFAULT = 5 * 60
@@ -36,7 +39,11 @@ timer_interval = 10
 msgs = { Mode.LEARN: "Learn timer over",
          Mode.PAUSE: "Pause timer over" }
 
+global_counters = { Mode.LEARN: 0, Mode.PAUSE: 0 }
+
 if __name__ == '__main__':
+    signal.signal(signal.SIGINT, sigint_handler)
+
     if len(sys.argv) > 1 and sys.argv[1] == 'dbg':
         timer_durations = { Mode.LEARN: 3,
                             Mode.PAUSE: 2 }
@@ -53,7 +60,7 @@ if __name__ == '__main__':
 
     print(f'Starting cycle of {minutes_and_seconds(timer_durations[Mode.LEARN])} long work blocks, {minutes_and_seconds(timer_durations[Mode.PAUSE])} long pause blocks')
     if long_pause_freq > 0:
-        print(f'After every {long_pause_freq} work blocks, the pause will instead be {minutes_and_seconds(timer_durations[Mode.PAUSE] * long_pause_multiplier)} long')
+        print(f'After every {long_pause_freq} work blocks the pause will instead be {minutes_and_seconds(timer_durations[Mode.PAUSE] * long_pause_multiplier)} long')
 
     cycles = 0
     mode = Mode.LEARN
@@ -61,16 +68,19 @@ if __name__ == '__main__':
         timer = timer_durations[mode]
 
         if long_pause_freq > 0:
-            if cycles > 0 and cycles % long_pause_freq == 0 and mode == Mode.PAUSE:
-                timer = timer * long_pause_multiplier
+            if mode == Mode.PAUSE and cycles % long_pause_freq == 0:
+                timer *= long_pause_multiplier
             elif mode == Mode.LEARN:
-                cycles = cycles + 1
+                cycles += 1
 
-        print(f'Started timer for {minutes_and_seconds(timer)}', end='\n')
+        print(f'Started timer for {minutes_and_seconds(timer)}')
         print(f'Remaining: {minutes_and_seconds(timer)}')
         while timer > 0:
             time.sleep(timer_interval)
-            timer = timer - timer_interval
+
+            timer -= timer_interval
+            global_counters[mode] += timer_interval
+
             erase_line()
             print(f'Remaining: {minutes_and_seconds(timer)}')
 
