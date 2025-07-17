@@ -4,7 +4,7 @@ A script which runs timers for a [Pomodoro Technique](https://en.wikipedia.org/w
 
 ## Operation
 
-The timers work by sleeping ten (but feel free to change this parameter in the script) seconds at a time until a timer is over, and the script then uses [notify-send](https://gitlab.gnome.org/GNOME/libnotify/) to send a corresponding message, which you have to dismiss before the next timer starts (on my KDE Plasma system the message sent via the parameters in the script stay indefinitely).
+The timers work by sleeping ten (but feel free to change this parameter in the script) seconds at a time until a timer is over, and the script then uses [notify-send](https://gitlab.gnome.org/GNOME/libnotify/) to send a corresponding message, which you have to dismiss before the next timer starts (on my KDE Plasma system the message sent via the parameters in the script stays indefinitely).
 
 ## Usage
 
