@@ -22,9 +22,9 @@ All of these parameters can be supplied via the command line.
 So
 
 ```
-python pomodoro.py 8 4 3 2
+python pomodoro.py 8 4 3 5
 ```
 
-alternates between eight-minute work timers and four-minute pause timers, but every third pause is 16 minutes long. Any argument not supplied is replaced with the default.
+alternates between eight-minute work timers and four-minute pause timers, but every third pause is 20 minutes long. Any argument not supplied is replaced with the default.
 
 The program can be exited by pressing Ctrl+C.
