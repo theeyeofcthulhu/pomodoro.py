@@ -13,13 +13,6 @@ class Mode(Enum):
     WORK = 1
     PAUSE = 2
 
-def toggle_mode(mode):
-    assert mode == Mode.WORK or mode == Mode.PAUSE
-    if mode == Mode.WORK:
-        return Mode.PAUSE
-    elif mode == Mode.PAUSE:
-        return Mode.WORK
-
 def erase_line():
     sys.stdout.write('\x1b[1A') # move up
     sys.stdout.write('\x1b[2K') # clear line
@@ -136,4 +129,4 @@ if __name__ == '__main__':
         if not skipped:
             subprocess.run(["notify-send", "-a", "pomodoro timer", "-w", "-t", "0", msgs[mode]])
 
-        mode = toggle_mode(mode)
+        mode = Mode.PAUSE if mode == Mode.WORK else mode.WORK
