@@ -38,4 +38,4 @@ The main script prints its PID at the top. Use that to invoke `skip.py`:
 1. `skip.py PID`: skips the current timer
 2. `skip.py PID 3`: skips the current timer and the next two
 3. `skip.py PID +4`: adds four minutes to the current timer
-4. `skip.py PID -5`: removes five minutes to the current timer
+4. `skip.py PID -5`: removes five minutes from the current timer
