@@ -20,7 +20,7 @@ if __name__ == '__main__':
     fn = fifo_filename(pid)
 
     if os.path.exists(fn):
-        assert False, f'FIFO has already been opened'
+        assert False, 'FIFO has already been opened'
 
     os.mkfifo(fn) 
 
