@@ -19,11 +19,9 @@ def erase_line():
     sys.stdout.flush()
 
 def minutes_and_seconds(s):
-    negative = False
-    if s < 0:
-        negative = True
-        s = -s
-    return f'{'-' if negative else ''}{s//60}:{s%60:02}'
+    sign = '-' if s < 0 else ''
+    s = abs(s)
+    return f'{sign}{s//60}:{s%60:02}'
 
 def sigint_handler(signum, frame):
     print(f'Worked for {minutes_and_seconds(global_counters[Mode.WORK])}; paused for {minutes_and_seconds(global_counters[Mode.PAUSE])}')
