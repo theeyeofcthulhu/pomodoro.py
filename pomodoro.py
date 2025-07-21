@@ -18,13 +18,14 @@ def erase_line():
     sys.stdout.write('\x1b[2K') # clear line
     sys.stdout.flush()
 
-def minutes_and_seconds(s):
+def format_time(s):
     sign = '-' if s < 0 else ''
     s = abs(s)
-    return f'{sign}{s//60}:{s%60:02}'
+    f = f'{s//(60*60)}:{s%(60*60)//60:02}:{s%60:02}' if s >= 60 * 60 else f'{s//60}:{s%60:02}'
+    return f'{sign}{f}'
 
 def sigint_handler(signum, frame):
-    print(f'Worked for {minutes_and_seconds(global_counters[Mode.WORK])}; paused for {minutes_and_seconds(global_counters[Mode.PAUSE])}')
+    print(f'Worked for {format_time(global_counters[Mode.WORK])}; paused for {format_time(global_counters[Mode.PAUSE])}')
     sys.exit(0)
 
 def sigusr1_handler(signum, frame):
@@ -72,9 +73,9 @@ if __name__ == '__main__':
         long_pause_multiplier = int(sys.argv[4]) if len(sys.argv) >= 5 else LONG_PAUSE_MULTIPLIER_DEFAULT
 
     print(f'[{os.getpid()}]')
-    print(f'Starting cycle of {minutes_and_seconds(timer_durations[Mode.WORK])} long work blocks, {minutes_and_seconds(timer_durations[Mode.PAUSE])} long pause blocks')
+    print(f'Starting cycle of {format_time(timer_durations[Mode.WORK])} long work blocks, {format_time(timer_durations[Mode.PAUSE])} long pause blocks')
     if long_pause_freq > 0:
-        print(f'After every {long_pause_freq} work blocks the pause will instead be {minutes_and_seconds(timer_durations[Mode.PAUSE] * long_pause_multiplier)} long')
+        print(f'After every {long_pause_freq} work blocks the pause will instead be {format_time(timer_durations[Mode.PAUSE] * long_pause_multiplier)} long')
 
     cycles = 0
     mode = Mode.WORK
@@ -89,14 +90,14 @@ if __name__ == '__main__':
             elif mode == Mode.WORK:
                 cycles += 1
 
-        print(f'Started timer for {minutes_and_seconds(timer)}')
+        print(f'Started timer for {format_time(timer)}')
 
         if skip_stack > 0:
             timer = 0
             skip_stack -= 1
             skipped = True
 
-        print(f'Remaining: {minutes_and_seconds(timer)}{'… skipped' if skipped else ''}')
+        print(f'Remaining: {format_time(timer)}{'… skipped' if skipped else ''}')
         while timer > 0:
             time.sleep(timer_interval)
 
@@ -105,7 +106,7 @@ if __name__ == '__main__':
             # skip_stack and rewind are set via IPC,
             # see sigusr1_handler() and skip.py
             if skip_stack > 0:
-                print(f'Remaining: {minutes_and_seconds(timer)}… skipped')
+                print(f'Remaining: {format_time(timer)}… skipped')
 
                 skipped = True
                 skip_stack -= 1
@@ -115,14 +116,14 @@ if __name__ == '__main__':
                 net_change = rewind * 60
                 timer += net_change
 
-                print(f'Remaining: {minutes_and_seconds(timer)}… rewound {minutes_and_seconds(net_change)}')
+                print(f'Remaining: {format_time(timer)}… rewound {format_time(net_change)}')
 
                 rewind = 0
             else:
                 timer -= timer_interval
                 global_counters[mode] += timer_interval
 
-                print(f'Remaining: {minutes_and_seconds(timer)}')
+                print(f'Remaining: {format_time(timer)}')
 
         if not skipped:
             subprocess.run(["notify-send", "-a", "pomodoro timer", "-w", "-t", "0", msgs[mode]])
