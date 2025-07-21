@@ -21,8 +21,7 @@ def erase_line():
 def format_time(s):
     sign = '-' if s < 0 else ''
     s = abs(s)
-    f = f'{s//(60*60)}:{s%(60*60)//60:02}:{s%60:02}' if s >= 60 * 60 else f'{s//60}:{s%60:02}'
-    return f'{sign}{f}'
+    return sign + (f'{s//(60*60)}:{s%(60*60)//60:02}:{s%60:02}' if s >= 60 * 60 else f'{s//60}:{s%60:02}')
 
 def sigint_handler(signum, frame):
     print(f'Worked for {format_time(global_counters[Mode.WORK])}; paused for {format_time(global_counters[Mode.PAUSE])}')
