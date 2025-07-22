@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import re
 import signal
 import sys
 
@@ -8,19 +9,24 @@ def fifo_filename(pid):
     return f'/tmp/pomodoro-fifo-{pid}'
 
 if __name__ == '__main__':
-    pid = int(sys.argv[1])
+    # pid is encoded in file name when this script is softlinked into /tmp/
+    match = re.search(r'\d{6}', sys.argv[0])
+    if match:
+        pid = int(match.group())
+    else:
+        print('No PID encoded in file name')
+        sys.exit(1)
 
     times = 1
     rewind = False
-    if len(sys.argv) > 2:
-        if sys.argv[2].startswith('+') or sys.argv[2].startswith('-'):
+    if len(sys.argv) > 1:
+        if sys.argv[1].startswith('+') or sys.argv[1].startswith('-'):
             rewind = True
-        times = int(sys.argv[2])
+        times = int(sys.argv[1])
 
     fn = fifo_filename(pid)
 
-    if os.path.exists(fn):
-        assert False, 'FIFO has already been opened'
+    assert not os.path.exists(fn), 'FIFO has already been opened'
 
     os.mkfifo(fn) 
 

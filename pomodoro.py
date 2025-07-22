@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
+import atexit
 from enum import Enum
 import os
+import pathlib
 import subprocess
 import signal
 import sys
@@ -38,6 +40,16 @@ def sigusr1_handler(signum, frame):
             skip_stack += int(read)
     os.remove(fn)
 
+def init_skip_script_link():
+    full_path = pathlib.Path('./skip.py').resolve()
+    os.symlink(full_path, skip_script_link)
+
+@atexit.register
+def cleanup_skip_script_link():
+    os.remove(skip_script_link)
+
+skip_script_link = f'/tmp/pomodoro-skip-{os.getpid()}.py'
+
 rewind = 0
 skip_stack = 0
 
@@ -59,6 +71,8 @@ if __name__ == '__main__':
 
     signal.signal(signal.SIGUSR1, sigusr1_handler)
 
+    init_skip_script_link()
+
     if len(sys.argv) > 1 and sys.argv[1] == 'dbg':
         timer_durations = { Mode.WORK: 3,
                             Mode.PAUSE: 2 }
@@ -73,7 +87,6 @@ if __name__ == '__main__':
         long_pause_freq = int(sys.argv[3]) if len(sys.argv) >= 4 else LONG_PAUSE_FREQ_DEFAULT
         long_pause_multiplier = int(sys.argv[4]) if len(sys.argv) >= 5 else LONG_PAUSE_MULTIPLIER_DEFAULT
 
-    print(f'[{os.getpid()}]')
     print(f'Starting cycle of {format_time(timer_durations[Mode.WORK])} long work blocks, {format_time(timer_durations[Mode.PAUSE])} long pause blocks')
     if long_pause_freq > 0:
         print(f'After every {long_pause_freq} work blocks the pause will instead be {format_time(timer_durations[Mode.PAUSE] * long_pause_multiplier)} long')

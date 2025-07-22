@@ -31,11 +31,11 @@ The program can be exited by pressing Ctrl+C.
 
 ## Controlling a Running Process
 
-If it becomes necessary to change a timer currently running or to skip a few timers, use the `skip.py` script.
+If it becomes necessary to change a timer currently running or to skip a few timers, use the link to `script.py` that was put into your `/tmp/` directory when you started the program. It's called `/tmp/pomodoro-skip-PID.py` with PID being the process ID of the running `pomodoro.py`. If you are only running one timer at a time, as intended, you can easily get to your script by shell autocomplete. If not, you can find out the PID belonging to any process by pressing Ctrl+Z to pause it, running `jobs -p` to get the PID, and then `fg` to resume it. The link is deleted when the program exits.
 
-The main script prints its PID at the top. Use that to invoke `skip.py`:
+Here's how the `skip.py` script works.
 
-1. `skip.py PID`: skips the current timer
-2. `skip.py PID 3`: skips the current timer and the next two
-3. `skip.py PID +4`: adds four minutes to the current timer
-4. `skip.py PID -5`: removes five minutes from the current timer
+1. `skip.py`: skips the current timer
+2. `skip.py 3`: skips the current timer and the next two
+3. `skip.py +4`: adds four minutes to the current timer
+4. `skip.py -5`: removes five minutes from the current timer
