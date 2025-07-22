@@ -10,7 +10,7 @@ def fifo_filename(pid):
 
 if __name__ == '__main__':
     # pid is encoded in file name when this script is softlinked into /tmp/
-    match = re.search(r'\d{6}', sys.argv[0])
+    match = re.search(r'\d+', sys.argv[0])
     if match:
         pid = int(match.group())
     else:
