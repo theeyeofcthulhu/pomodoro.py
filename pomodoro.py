@@ -55,6 +55,8 @@ global_counters = { Mode.WORK: 0, Mode.PAUSE: 0 }
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, sigint_handler)
+    signal.signal(signal.SIGTERM, sigint_handler)
+
     signal.signal(signal.SIGUSR1, sigusr1_handler)
 
     if len(sys.argv) > 1 and sys.argv[1] == 'dbg':
