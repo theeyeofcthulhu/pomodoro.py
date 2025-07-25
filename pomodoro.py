@@ -115,6 +115,9 @@ if __name__ == '__main__':
         while timer > 0:
             time.sleep(timer_interval)
 
+            timer -= timer_interval
+            global_counters[mode] += timer_interval
+
             erase_line()
 
             # skip_stack and rewind are set via IPC,
@@ -134,9 +137,6 @@ if __name__ == '__main__':
 
                 rewind = 0
             else:
-                timer -= timer_interval
-                global_counters[mode] += timer_interval
-
                 print(f'Remaining: {format_time(timer)}')
 
         if not skipped:
