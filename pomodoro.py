@@ -11,6 +11,11 @@ import time
 
 from skip import fifo_filename
 
+if not os.path.exists('./config.py'):
+    import config_default as config
+else:
+    import config
+
 class Mode(Enum):
     WORK = 1
     PAUSE = 2
@@ -53,13 +58,6 @@ skip_script_link = f'/tmp/pomodoro-skip-{os.getpid()}.py'
 rewind = 0
 skip_stack = 0
 
-WORK_TIMER_DEFAULT = 25 * 60
-PAUSE_TIMER_DEFAULT = 5 * 60
-LONG_PAUSE_FREQ_DEFAULT = 4
-LONG_PAUSE_MULTIPLIER_DEFAULT = 4
-
-timer_interval = 10
-
 msgs = { Mode.WORK: "Work timer over",
          Mode.PAUSE: "Pause timer over" }
 
@@ -76,16 +74,16 @@ if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'dbg':
         timer_durations = { Mode.WORK: 3,
                             Mode.PAUSE: 2 }
-        timer_interval = 1
+        config.timer_interval = 1
         long_pause_freq = 3
         long_pause_multiplier = 2
     else:
         timer_durations = { Mode.WORK: int(sys.argv[1]) * 60 if len(sys.argv) >= 2
-                            else WORK_TIMER_DEFAULT,
+                            else config.WORK_TIMER_DEFAULT,
                             Mode.PAUSE: int(sys.argv[2]) * 60 if len(sys.argv) >= 3
-                            else PAUSE_TIMER_DEFAULT }
-        long_pause_freq = int(sys.argv[3]) if len(sys.argv) >= 4 else LONG_PAUSE_FREQ_DEFAULT
-        long_pause_multiplier = int(sys.argv[4]) if len(sys.argv) >= 5 else LONG_PAUSE_MULTIPLIER_DEFAULT
+                            else config.PAUSE_TIMER_DEFAULT }
+        long_pause_freq = int(sys.argv[3]) if len(sys.argv) >= 4 else config.LONG_PAUSE_FREQ_DEFAULT
+        long_pause_multiplier = int(sys.argv[4]) if len(sys.argv) >= 5 else config.LONG_PAUSE_MULTIPLIER_DEFAULT
 
     print(f'Starting cycle of {format_time(timer_durations[Mode.WORK])} long work blocks, {format_time(timer_durations[Mode.PAUSE])} long pause blocks')
     if long_pause_freq > 0:
@@ -113,10 +111,10 @@ if __name__ == '__main__':
 
         print(f'Remaining: {format_time(timer)}{'… skipped' if skipped else ''}')
         while timer > 0:
-            time.sleep(timer_interval)
+            time.sleep(config.timer_interval)
 
-            timer -= timer_interval
-            global_counters[mode] += timer_interval
+            timer -= config.timer_interval
+            global_counters[mode] += config.timer_interval
 
             erase_line()
 

@@ -4,15 +4,15 @@ A script which runs timers for a [Pomodoro Technique](https://en.wikipedia.org/w
 
 ## Operation
 
-The timers work by sleeping ten (but feel free to change this parameter in the script) seconds at a time until a timer is over, and the script then uses [notify-send](https://gitlab.gnome.org/GNOME/libnotify/) to send a corresponding message, which you have to dismiss before the next timer starts (on my KDE Plasma system the message sent via the parameters in the script stays indefinitely).
+By default, the timers work by sleeping ten seconds at a time until a timer is over, and the script then uses [notify-send](https://gitlab.gnome.org/GNOME/libnotify/) to send a corresponding message, which you have to dismiss before the next timer starts (on my KDE Plasma system the message sent via the parameters in the script stays indefinitely).
 
 ## Usage
 
-Ran without any arguments, the script switches between 25-minute work and five-minute pause timers, but every fourth pause timer is four times that length, 20 minutes.
+Ran without any arguments and the default config, the script switches between 25-minute work and five-minute pause timers, but every fourth pause timer is four times that length, 20 minutes.
 
-All of these parameters can be supplied via the command line.
+All of these parameters can be supplied via the command line, and their default values can also be changed.
 
-**Command line arguments:**
+### Command line arguments:
 
 1. Work timer length
 2. Pause timer length
@@ -26,6 +26,10 @@ python pomodoro.py 8 4 3 5
 ```
 
 alternates between eight-minute work timers and four-minute pause timers, but every third pause is 20 minutes long. Any argument not supplied is replaced with the default.
+
+### Config
+
+Copy `config_default.py` into `config.py` and input your preferred values. The script will then load `config.py` instead of `config_default.py`
 
 The program can be exited by pressing Ctrl+C.
 
