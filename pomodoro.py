@@ -138,6 +138,13 @@ if __name__ == '__main__':
                 print(f'Remaining: {format_time(timer)}')
 
         if not skipped:
+            start = time.time()
+
             subprocess.run(["notify-send", "-a", "pomodoro timer", "-w", "-t", "0", msgs[mode]])
+
+            elapsed_intervals = int((time.time() - start) // config.timer_interval)
+            if elapsed_intervals > 0:
+                global_counters[mode] += elapsed_intervals * config.timer_interval
+                print(f'Extended by {format_time(elapsed_intervals * config.timer_interval)}')
 
         mode = Mode.PAUSE if mode == Mode.WORK else mode.WORK
