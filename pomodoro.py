@@ -96,11 +96,12 @@ if __name__ == '__main__':
 
         timer = timer_durations[mode]
 
-        if long_pause_freq > 0:
-            if mode == Mode.PAUSE and cycles % long_pause_freq == 0:
-                timer *= long_pause_multiplier
-            elif mode == Mode.WORK:
-                cycles += 1
+        if long_pause_freq > 0 and mode == Mode.PAUSE and cycles % long_pause_freq == 0:
+            timer *= long_pause_multiplier
+
+        if mode == Mode.WORK:
+            cycles += 1
+            print(f'--- Cycle {cycles} ---')
 
         print(f'Started timer for {format_time(timer)}')
 
